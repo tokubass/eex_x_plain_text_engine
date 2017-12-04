@@ -5,34 +5,34 @@ defmodule EEx.X.PlainTextEngineTest do
   test "plain atom" do
     str =  EEx.eval_string(
       "<%= atom %>",
-      [atom: to_plain(:api)],
+      [atom: :api],
       engine: EEx.X.PlainTextEngine
     )
     assert ":api" == str
   end
 
-  test "plain function in template" do
-    str =  EEx.eval_string(
-      "<%= atom |> to_plain.() %>",
-      [atom: :api, to_plain: &to_plain(&1) ],
-      engine: EEx.X.PlainTextEngine
-    )
-    assert ":api" == str
-  end
+  # test "plain function in template" do
+  #   str =  EEx.eval_string(
+  #     "<%= atom |> as_original.() %>",
+  #     [atom: :api, as_original: &as_original(&1) ],
+  #     engine: EEx.X.PlainTextEngine
+  #   )
+  #   assert "api" == str
+  # end
 
   test "plain string" do
     str =  EEx.eval_string(
       "<%= string %>",
-      [string: to_plain("test")],
+      [string: "test"],
       engine: EEx.X.PlainTextEngine
     )
     assert ~s("test") == str
   end
 
-  test "char" do
+  test "char (EEx default engine)" do
     str =  EEx.eval_string(
       "<%= char %>",
-      [char: 'test'],
+      [char: as_original('test')],
       engine: EEx.X.PlainTextEngine
     )
     assert "test" == str
@@ -41,7 +41,7 @@ defmodule EEx.X.PlainTextEngineTest do
   test "nor support char" do
     str =  EEx.eval_string(
       "<%= char %>",
-      [char: to_plain('test')],
+      [char: 'test'],
       engine: EEx.X.PlainTextEngine
     )
     assert "[116, 101, 115, 116]" == str
@@ -50,7 +50,7 @@ defmodule EEx.X.PlainTextEngineTest do
   test "plain list" do
     str =  EEx.eval_string(
       "<%= list %>",
-      [list: to_plain([a: 1])],
+      [list: [a: 1]],
       engine: EEx.X.PlainTextEngine
     )
     assert "[a: 1]" == str
@@ -59,7 +59,7 @@ defmodule EEx.X.PlainTextEngineTest do
   test "plain map" do
     str =  EEx.eval_string(
       "<%= map %>",
-      [map: to_plain(%{a: 1})],
+      [map: %{a: 1}],
       engine: EEx.X.PlainTextEngine
     )
     assert "%{a: 1}" == str
@@ -70,7 +70,7 @@ defmodule EEx.X.PlainTextEngineTest do
   test "plain struct" do
     str =  EEx.eval_string(
       "<%= struct  %>",
-      [struct: to_plain(%__MODULE__{})],
+      [struct: %__MODULE__{}],
       engine: EEx.X.PlainTextEngine
     )
     assert "%EEx.X.PlainTextEngineTest{name: \"aaa\", tmp: :tmp}" == str
@@ -79,7 +79,7 @@ defmodule EEx.X.PlainTextEngineTest do
   test "mistakable_list" do
     str =  EEx.eval_string(
       "<%= list %>",
-      [list: "[10, 100]"],
+      [list: [10, 100]],
       engine: EEx.X.PlainTextEngine
     )
     assert "[10, 100]" == str
@@ -89,11 +89,11 @@ defmodule EEx.X.PlainTextEngineTest do
 
   test "nest" do
     str =  EEx.eval_string(
-      "<%= p.c %>",
-      [p: %{c: "aaa"}],
+      "<%= p.cc %>",
+      [p: %{cc: "aaa"}],
       engine: EEx.X.PlainTextEngine
     )
-    assert "aaa" == str
+    assert ~s("aaa") == str
   end
 
 
@@ -103,20 +103,13 @@ defmodule EEx.X.PlainTextEngineTest do
       [bar: "baz"],
       engine: EEx.X.PlainTextEngine
     )
-    assert "baz" == str
+    assert ~s("baz") == str
 
-    str =  EEx.eval_string(
-      "<%= if Mix.env == :test do %><%= bar %><%= end %>",
-      [bar: "baz"],
-      engine: EEx.X.PlainTextEngine
-    )
-
-    assert "baz" == str
     str =  EEx.eval_string(
       "<%= if to_string(Mix.env) =~ ~r/\\Atest\\z/ do %><%= bar %><%= end %>",
       [bar: "baz"],
       engine: EEx.X.PlainTextEngine
     )
-    assert "baz" == str
+    assert ~s("baz") == str
   end
 end
