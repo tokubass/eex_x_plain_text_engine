@@ -11,13 +11,13 @@ defmodule EEx.X.PlainTextEngineTest do
     assert ":api" == str
   end
 
-  test "string" do
+  test "plain function in template" do
     str =  EEx.eval_string(
-      "<%= string %>",
-      [string: "test"],
+      "<%= atom |> to_plain.() %>",
+      [atom: :api, to_plain: &to_plain(&1) ],
       engine: EEx.X.PlainTextEngine
     )
-    assert "test" == str
+    assert ":api" == str
   end
 
   test "plain string" do
@@ -84,5 +84,39 @@ defmodule EEx.X.PlainTextEngineTest do
     )
     assert "[10, 100]" == str
   end
-  
+
+
+
+  test "nest" do
+    str =  EEx.eval_string(
+      "<%= p.c %>",
+      [p: %{c: "aaa"}],
+      engine: EEx.X.PlainTextEngine
+    )
+    assert "aaa" == str
+  end
+
+
+  test "if" do
+    str =  EEx.eval_string(
+      "<%= if true do %><%= bar %><%= end %>",
+      [bar: "baz"],
+      engine: EEx.X.PlainTextEngine
+    )
+    assert "baz" == str
+
+    str =  EEx.eval_string(
+      "<%= if Mix.env == :test do %><%= bar %><%= end %>",
+      [bar: "baz"],
+      engine: EEx.X.PlainTextEngine
+    )
+
+    assert "baz" == str
+    str =  EEx.eval_string(
+      "<%= if to_string(Mix.env) =~ ~r/\\Atest\\z/ do %><%= bar %><%= end %>",
+      [bar: "baz"],
+      engine: EEx.X.PlainTextEngine
+    )
+    assert "baz" == str
+  end
 end

@@ -37,11 +37,8 @@ defmodule EEx.X.PlainTextEngine do
     quote do
       require unquote(__MODULE__)
     
-      u_buf = unquote(buf)
-      u_expr   = unquote(expr)
-
       expr_string =  if unquote(__MODULE__).is_my_struct?(unquote(expr)) do
-         val =  u_expr.value
+         val =  unquote(expr).value
          case val do
            _ when is_list(val) 
              ->
@@ -57,10 +54,10 @@ defmodule EEx.X.PlainTextEngine do
              -> inspect(val)
          end
       else
-        String.Chars.to_string(u_expr)
+        String.Chars.to_string(unquote(expr))
       end
 
-       u_buf <> expr_string
+       unquote(buf) <> expr_string
     end
   end
 
