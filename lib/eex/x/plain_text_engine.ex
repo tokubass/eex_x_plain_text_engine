@@ -33,7 +33,7 @@ defmodule EEx.X.PlainTextEngine do
   end
 
 
-  def handle_expr(buf, "=", {:if, _, _} = expr) do
+  def handle_expr(buf, "=", {macro, _, _} = expr) when macro in [:if,:for,:cond]do
     expr = Macro.prewalk(expr, &EEx.Engine.handle_assign/1)
     super(buf,"=", expr)
   end
@@ -42,7 +42,6 @@ defmodule EEx.X.PlainTextEngine do
     expr = Macro.prewalk(expr, &EEx.Engine.handle_assign/1)
     quote do
       require unquote(__MODULE__)
-    
       expr_string =  if unquote(__MODULE__).is_my_struct?(unquote(expr)) do
         String.Chars.to_string(unquote(expr).value)
       else
