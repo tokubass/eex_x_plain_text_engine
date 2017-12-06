@@ -11,7 +11,7 @@ defmodule EEx.X.PlainTextEngine do
 
   use EEx.Engine
 
-  defstruct mark: true, value: nil
+  defstruct value: nil
 
   @doc """
 
