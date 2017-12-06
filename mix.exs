@@ -3,7 +3,7 @@ defmodule EEx.X.PlainTextEngine.Mixfile do
 
   def project do
     [app: :eex_x_plain_text_engine,
-     version: "0.1.0",
+     version: "0.2.0",
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
