@@ -16,10 +16,10 @@ defmodule EEx.X.PlainTextEngine do
   @doc """
 
   ## Examples
-    iex> EEx.eval_string("<%= atom %>", [ atom: :api ])
+    iex> EEx.eval_string("<%= @atom %>", assigns: [ atom: :api ])
     "api"
 
-    iex> EEx.eval_string("<%= atom %>", [ atom: :api ], engine: EEx.X.PlainTextEngine)
+    iex> EEx.eval_string("<%= @atom %>", [assigns: [ atom: :api ]], engine: EEx.X.PlainTextEngine)
     ":api"
 
   """
@@ -34,10 +34,12 @@ defmodule EEx.X.PlainTextEngine do
 
 
   def handle_expr(buf, "=", {:if, _, _} = expr) do
+    expr = Macro.prewalk(expr, &EEx.Engine.handle_assign/1)
     super(buf,"=", expr)
   end
 
   def handle_expr(buf, "=", expr) do
+    expr = Macro.prewalk(expr, &EEx.Engine.handle_assign/1)
     quote do
       require unquote(__MODULE__)
     
@@ -45,7 +47,6 @@ defmodule EEx.X.PlainTextEngine do
         String.Chars.to_string(unquote(expr).value)
       else
         cond do
-
           is_list(unquote(expr)) 
             ->
             if Enum.all?(unquote(expr), fn(x) -> is_integer(x) end) do
@@ -68,8 +69,9 @@ defmodule EEx.X.PlainTextEngine do
     end
   end
 
- def handle_expr(buf, mark, expr) do
-   super(buf, mark, expr)
+  def handle_expr(buf, mark, expr) do
+    expr = Macro.prewalk(expr, &EEx.Engine.handle_assign/1)
+    super(buf, mark, expr)
   end
 
   defmacro normalize_for_print(list) do
