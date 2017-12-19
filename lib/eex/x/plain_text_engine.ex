@@ -56,8 +56,6 @@ defmodule EEx.X.PlainTextEngine do
             else
               inspect(unquote(expr))   
             end
-          is_binary(unquote(expr))
-            -> ~s(") <> unquote(expr) <> ~s(")
           true
             -> inspect(unquote(expr))
         end
