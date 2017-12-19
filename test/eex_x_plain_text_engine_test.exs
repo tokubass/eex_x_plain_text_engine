@@ -107,21 +107,21 @@ defmodule EEx.X.PlainTextEngineTest do
 
   test "if" do
     str =  EEx.eval_string(
-      "<%= if true do %><%= @bar %><%= end %>",
+      "<%= if true do %><%= @bar %><% end %>",
       [assigns: [bar: "baz"]],
       engine: EEx.X.PlainTextEngine
     )
     assert ~s("baz") == str
 
     str =  EEx.eval_string(
-      "<%= if to_string(Mix.env) =~ ~r/\\Atest\\z/ do %><%= @bar %><%= end %>",
+      "<%= if to_string(Mix.env) =~ ~r/\\Atest\\z/ do %><%= @bar %><% end %>",
       [assigns: [bar: "baz"]],
       engine: EEx.X.PlainTextEngine
     )
     assert ~s("baz") == str
 
     str =  EEx.eval_string(
-      "<%= @foo %><%= if false do %><%= @bar %><%= end %>",
+      "<%= @foo %><%= if false do %><%= @bar %><% end %>",
       [assigns: [foo: "foo"]],
       engine: EEx.X.PlainTextEngine
     )
@@ -129,7 +129,7 @@ defmodule EEx.X.PlainTextEngineTest do
     
 
     str =  EEx.eval_string(
-      "<%= @foo %><%= if @boolean do %><%= @bar %><%= end %>",
+      "<%= @foo %><%= if @boolean do %><%= @bar %><% end %>",
       [assigns: [foo: "foo", boolean: true, bar: "bar" ]],
       engine: EEx.X.PlainTextEngine
     )
